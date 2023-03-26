@@ -9,12 +9,12 @@
 }
 
 .square {
-  width: 400px;
-  height: 400px;
+  width: 200px;
+  height: 200px;
   border: 1px solid black;
   font-size: 36px;
   text-align: center;
-  line-height: 400px;
+  line-height: 200px;
   cursor: pointer;
 }
 
