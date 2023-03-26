@@ -1,44 +1,87 @@
-const board = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
+// Initialize the game state
 let currentPlayer = 'X';
-let gameOver = false;
+let gameStatus = ['', '', '', '', '', '', '', '', ''];
+const winningMessage = () => `Player ${currentPlayer} has won!`;
+const drawMessage = () => `Game ended in a draw!`;
+const currentPlayerTurn = () => `It's ${currentPlayer}'s turn`;
 
-function printBoard() {
-  for (let i = 0; i < 9; i++) {
-    document.getElementById(i.toString()).innerText = board[i];
+// Get DOM elements
+const squares = document.querySelectorAll('.square');
+const message = document.getElementById('message');
+
+// Add event listeners to each square
+squares.forEach(square => square.addEventListener('click', handleSquareClick));
+
+// Handle square clicks
+function handleSquareClick(event) {
+  const square = event.target;
+  const index = Array.from(squares).indexOf(square);
+
+  // If the square is already filled or the game is over, return
+  if (gameStatus[index] !== '' || !gameStatus.includes('')) {
+    return;
+  }
+
+  // Update the game state
+  gameStatus[index] = currentPlayer;
+  square.textContent = currentPlayer;
+  square.classList.add(`player${currentPlayer}`);
+
+  // Check if the game is over
+  if (checkForWin()) {
+    message.textContent = winningMessage();
+  } else if (!gameStatus.includes('')) {
+    message.textContent = drawMessage();
+  } else {
+    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    message.textContent = currentPlayerTurn();
   }
 }
 
-function checkWin() {
-  // check rows
-  for (let i = 0; i < 9; i += 3) {
-    if (board[i] === board[i+1] && board[i+1] === board[i+2] && board[i] !== ' ') {
+// Check if any player has won the game
+function checkForWin() {
+  const winConditions = [
+    // Rows
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    // Columns
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    // Diagonals
+    [0, 4, 8],
+    [2, 4, 6]
+  ];
+
+  for (let i = 0; i < winConditions.length; i++) {
+    const [a, b, c] = winConditions[i];
+    if (gameStatus[a] !== '' && gameStatus[a] === gameStatus[b] && gameStatus[b] === gameStatus[c]) {
       return true;
     }
   }
-  // check columns
-  for (let i = 0; i < 3; i++) {
-    if (board[i] === board[i+3] && board[i+3] === board[i+6] && board[i] !== ' ') {
-      return true;
-    }
-  }
-  // check diagonals
-  if ((board[0] === board[4] && board[4] === board[8]) || (board[2] === board[4] && board[4] === board[6])) {
-    return true;
-  }
-  // no winner
+
   return false;
 }
 
-function playTurn(square) {
-  const id = parseInt(square.id);
-  if (board[id] === ' ' && !gameOver) {
-    board[id] = currentPlayer;
-    printBoard();
-    if (checkWin()) {
-      gameOver = true;
-      document.getElementById('message').innerText = `Player ${currentPlayer} wins!`;
-    } else if (!board.includes(' ')) {
-      gameOver = true;
-      document.getElementById('message').innerText = 'Tie game!';
-    } else {
-      currentPlayer = currentPlayer ===
+// Initialize the game
+function startGame() {
+  message.textContent = currentPlayerTurn();
+}
+
+// Restart the game
+function restartGame() {
+  gameStatus = ['', '', '', '', '', '', '', '', ''];
+  currentPlayer = 'X';
+  squares.forEach(square => {
+    square.textContent = '';
+    square.classList.remove('playerX', 'playerO');
+  });
+  startGame();
+}
+
+// Add event listener to the "Restart" button
+document.getElementById('restartButton').addEventListener('click', restartGame);
+
+// Start the game
+startGame();
