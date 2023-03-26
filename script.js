@@ -41,16 +41,4 @@ function playTurn(square) {
       gameOver = true;
       document.getElementById('message').innerText = 'Tie game!';
     } else {
-      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-      document.getElementById('message').innerText = `Player ${currentPlayer}'s turn`;
-    }
-  }
-}
-
-// add event listeners to squares
-const squares = document.getElementsByClassName('square');
-for (let i = 0; i < squares.length; i++) {
-  squares[i].addEventListener('click', function() {
-    playTurn(this);
-  });
-}
+      currentPlayer = currentPlayer ===
